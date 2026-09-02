@@ -26,8 +26,17 @@ import {
   Zap,
 } from "lucide-react";
 
-type PageKey = "home" | "services" | "solutions" | "about" | "packages" | "work" | "contact";
+type PageKey = "home" | "services" | "solutions" | "about" | "packages" | "work" | "contact" | "privacy" | "terms";
 type Lang = "ar" | "en";
+
+const CONTACT = {
+  email: "a.eae2010@icloud.com",
+  whatsappNumber: "971503358014",
+  whatsappDisplay: "050 335 8014",
+} as const;
+
+const LEADS_ENDPOINT =
+  "https://script.google.com/macros/s/AKfycbzhFvMWUU2z3cQ4CgjrTfMxXivnnRq0Z11eh4BI9WeduXUVuDq2LIKZxc_t2MIQrNUVog/exec";
 
 const nav = [
   ["home", "/", "الرئيسية", "Home"],
@@ -38,10 +47,6 @@ const nav = [
   ["about", "/about", "من نحن", "About"],
   ["contact", "/contact", "تواصل", "Contact"],
 ] as const;
-
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@example.com";
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971500000000";
-const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY || "+971 50 000 0000";
 
 const services = [
   { icon: Globe2, ar: "تصميم وتطوير المواقع", en: "Website Design & Development", dar: "مواقع سريعة، متجاوبة ومبنية لتحويل الزيارات إلى فرص.", den: "Fast, responsive websites built to turn visits into opportunities." },
@@ -60,28 +65,76 @@ const packages = [
   { ar: "توسع", en: "Scale", descAr: "للشركات التي تحتاج نظامًا رقميًا متكاملًا", descEn: "For companies needing an integrated digital system", itemsAr: ["حلول وتطبيقات مخصصة", "ربط العمليات والعملاء", "دعم وتطوير مستمر"], itemsEn: ["Custom solutions and apps", "Connected operations and CRM", "Ongoing support and iteration"] },
 ];
 
+const legalContent = {
+  privacy: {
+    ar: [
+      ["البيانات التي نجمعها", "عند إرسال نموذج التواصل قد نجمع الاسم، رقم الهاتف، البريد الإلكتروني، الخدمة المطلوبة، وتفاصيل المشروع التي تختار مشاركتها."],
+      ["كيف نستخدم البيانات", "نستخدم هذه البيانات للرد على طلبك، إعداد عرض مناسب، متابعة المشروع، وتحسين خدماتنا. لا نبيع بياناتك الشخصية."],
+      ["الحفظ والحماية", "نحتفظ بالبيانات بقدر ما يلزم لمتابعة الطلب وتقديم الخدمة، ونتخذ إجراءات معقولة لحمايتها من الوصول غير المصرح به."],
+      ["مشاركة البيانات", "قد نستخدم مزودي خدمات موثوقين لتشغيل الموقع وإدارة الطلبات، وبالقدر اللازم فقط لتقديم الخدمة."],
+      ["حقوقك", "يمكنك طلب الاطلاع على بياناتك أو تصحيحها أو حذفها بالتواصل معنا عبر البريد الإلكتروني الظاهر في الموقع."],
+      ["التحديثات", "قد نحدّث هذه السياسة عند تغير خدماتنا أو المتطلبات النظامية. يظهر آخر تحديث في أسفل الصفحة."],
+    ],
+    en: [
+      ["Information we collect", "When you submit our contact form, we may collect your name, phone number, email address, requested service, and any project details you choose to share."],
+      ["How we use information", "We use this information to respond to your request, prepare a suitable proposal, follow up on the project, and improve our services. We do not sell personal information."],
+      ["Retention and security", "We retain information for as long as reasonably needed to handle your request and provide services, and take reasonable steps to protect it from unauthorized access."],
+      ["Service providers", "We may use trusted providers to operate the website and manage requests, and only to the extent needed to deliver the service."],
+      ["Your choices", "You may ask to access, correct, or delete your information by contacting us through the email shown on this website."],
+      ["Updates", "We may update this policy when our services or legal requirements change. The latest update date appears below."],
+    ],
+  },
+  terms: {
+    ar: [
+      ["نطاق الخدمات", "تعرض HIM BAZ خدمات رقمية وتقنية وتسويقية. يتم تحديد النطاق النهائي، المدة، السعر، والمخرجات في عرض أو اتفاق مستقل لكل مشروع."],
+      ["عروض الأسعار", "أي أسعار أو باقات منشورة هي أسعار ابتدائية ما لم ينص عرض السعر النهائي على خلاف ذلك، وقد تتغير بحسب حجم المشروع ومتطلباته."],
+      ["مسؤوليات العميل", "يلتزم العميل بتقديم المعلومات والمحتوى والموافقات اللازمة في الوقت المناسب، والتأكد من امتلاكه حقوق استخدام المواد التي يزودنا بها."],
+      ["الملكية الفكرية", "تحدد ملكية المخرجات وحقوق الاستخدام في اتفاق المشروع. تبقى الأدوات والمكونات السابقة للمشروع مملوكة لأصحابها."],
+      ["المدفوعات والتغييرات", "تحدد مواعيد الدفعات وسياسة التعديل والإلغاء في عرض السعر أو العقد. أي أعمال إضافية خارج النطاق تتطلب موافقة منفصلة."],
+      ["حدود المسؤولية", "نبذل عناية مهنية في تنفيذ الخدمات، لكن النتائج التسويقية والتجارية قد تتأثر بعوامل خارج سيطرتنا ولا يمكن ضمانها بشكل مطلق."],
+    ],
+    en: [
+      ["Scope of services", "HIM BAZ provides digital, technology, and marketing services. Final scope, timing, price, and deliverables are defined in a separate proposal or agreement for each project."],
+      ["Quotations", "Published package prices are starting estimates unless a final quotation states otherwise, and may vary with project size and requirements."],
+      ["Client responsibilities", "The client provides required information, content, and approvals on time and confirms they have the right to use all materials supplied to us."],
+      ["Intellectual property", "Ownership and usage rights are defined in the project agreement. Pre-existing tools and components remain the property of their respective owners."],
+      ["Payments and changes", "Payment dates, revisions, and cancellation terms are defined in the proposal or contract. Work outside the agreed scope requires separate approval."],
+      ["Limitations", "We perform services with professional care, but marketing and business outcomes can be affected by factors outside our control and cannot be guaranteed absolutely."],
+    ],
+  },
+} as const;
+
 function ProposalForm({ lang }: { lang: Lang }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
     const form = e.currentTarget;
     const data = new FormData(form);
+    if (data.get("website")) {
+      setStatus("sent");
+      form.reset();
+      return;
+    }
+    data.set("language", lang);
+    data.set("source", "him-baz-website");
+    data.set("submittedAt", new Date().toISOString());
     try {
-      const endpoint = process.env.NEXT_PUBLIC_LEADS_ENDPOINT;
-      if (!endpoint) throw new Error("Missing NEXT_PUBLIC_LEADS_ENDPOINT");
-      await fetch(endpoint, { method: "POST", body: data, mode: "no-cors" });
+      await fetch(LEADS_ENDPOINT, { method: "POST", body: data, mode: "no-cors" });
       setStatus("sent");
       form.reset();
     } catch {
-      const name = String(data.get("name") || "");
-      const service = String(data.get("service") || "");
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`مرحباً HIM BAZ، أنا ${name} وأرغب في خدمة ${service}`)}`, "_blank");
-      setStatus("idle");
+      setStatus("error");
     }
   }
+  const whatsappFallback = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(
+    lang === "ar"
+      ? "مرحباً HIM BAZ، تعذر إرسال النموذج وأرغب في مناقشة مشروعي."
+      : "Hello HIM BAZ, the form could not be sent and I would like to discuss my project.",
+  )}`;
   return (
-    <form className="proposal-form" onSubmit={submit}>
+    <form className="proposal-form" onSubmit={submit} aria-describedby="proposal-status">
+      <label className="website-field" aria-hidden="true"><span>Website</span><input name="website" tabIndex={-1} autoComplete="off" /></label>
       <div className="field-row">
         <label><span>{lang === "ar" ? "الاسم" : "Name"}</span><input name="name" autoComplete="name" required placeholder={lang === "ar" ? "اسمك أو اسم الشركة" : "Your name or company"} /></label>
         <label><span>{lang === "ar" ? "رقم التواصل" : "Phone"}</span><input name="phone" type="tel" autoComplete="tel" required placeholder="+971" /></label>
@@ -94,9 +147,14 @@ function ProposalForm({ lang }: { lang: Lang }) {
         </select>
       </label>
       <label><span>{lang === "ar" ? "حدثنا عن مشروعك" : "Tell us about your project"}</span><textarea name="message" rows={4} placeholder={lang === "ar" ? "ما الذي تريد تحقيقه؟" : "What would you like to achieve?"} /></label>
+      <label className="consent-field"><input name="privacyConsent" type="checkbox" required /><span>{lang === "ar" ? <>أوافق على استخدام بياناتي للرد على طلبي وفق <Link href="/privacy">سياسة الخصوصية</Link>.</> : <>I agree to the use of my information to respond to my request under the <Link href="/privacy">Privacy Policy</Link>.</>}</span></label>
       <button className="primary-btn form-btn" type="submit" disabled={status === "sending"} aria-live="polite">
         {status === "sent" ? <><Check size={19}/>{lang === "ar" ? "تم إرسال طلبك" : "Request sent"}</> : <><Send size={18}/>{status === "sending" ? (lang === "ar" ? "جارٍ الإرسال..." : "Sending...") : (lang === "ar" ? "اطلب عرضًا" : "Request a proposal")}</>}
       </button>
+      <p id="proposal-status" className={`form-status ${status}`} role="status" aria-live="polite">
+        {status === "sent" && (lang === "ar" ? "شكرًا لك. استلمنا طلبك وسنتواصل معك قريبًا." : "Thank you. We received your request and will contact you soon.")}
+        {status === "error" && <>{lang === "ar" ? "تعذر الإرسال الآن. يمكنك " : "We could not send the form. You can "}<a href={whatsappFallback} target="_blank" rel="noreferrer">{lang === "ar" ? "متابعة الطلب عبر واتساب" : "continue on WhatsApp"}</a>.</>}
+      </p>
     </form>
   );
 }
@@ -113,6 +171,8 @@ export default function SiteShell({ page }: { page: PageKey }) {
     packages: ["باقات مرنة لكل مرحلة", "Flexible packages for every stage", "نحدد النطاق المناسب بعد فهم هدفك، ثم نقدم عرضًا واضحًا يناسب مشروعك.", "We understand your goal first, then shape a clear proposal around your project."],
     work: ["نصنع أثرًا يمكن قياسه", "We create impact you can measure", "نركز على تجارب واضحة، تنفيذ متقن، ونتائج تخدم العمل.", "We focus on clear experiences, thoughtful execution and business outcomes."],
     contact: ["لنبدأ من هدفك", "Let’s start with your goal", "أخبرنا بما تريد تحقيقه وسنتواصل معك لمناقشة الخطوة المناسبة.", "Tell us what you want to achieve and we’ll discuss the right next step."],
+    privacy: ["سياسة الخصوصية", "Privacy Policy", "نوضح هنا البيانات التي نجمعها وكيف نستخدمها ونحميها.", "This page explains what information we collect and how we use and protect it."],
+    terms: ["الشروط والأحكام", "Terms & Conditions", "شروط عامة لاستخدام الموقع وطلب خدمات HIM BAZ.", "General terms for using this website and requesting HIM BAZ services."],
   };
   const t = title[page];
   const home = page === "home";
@@ -173,12 +233,14 @@ export default function SiteShell({ page }: { page: PageKey }) {
 
         {page === "about" && <section className="section about-grid"><div><span className="kicker">HIM BAZ</span><h2>{ar?"نبني ما يحتاجه عملك، لا ما يضيف تعقيدًا":"We build what your business needs—not extra complexity"}</h2></div><div><p>{ar?"نجمع التقنية والإبداع والتسويق في شراكة عملية. هدفنا أن تحصل على حل واضح، قابل للاستخدام، ومهيأ للنمو مع نشاطك.":"We bring technology, creativity and marketing into one practical partnership. The goal is a clear, usable solution that can grow with your business."}</p><div className="values">{[[Zap,"سرعة بوعي","Purposeful speed"],[Target,"تركيز على النتيجة","Outcome focused"],[MessageCircle,"تواصل واضح","Clear communication"]].map(([Icon,a,e])=>{const I=Icon as typeof Zap;return <span key={String(a)}><I size={20}/>{ar?String(a):String(e)}</span>})}</div></div></section>}
 
-        {page === "contact" && <section className="section contact-grid"><div className="contact-copy"><span className="kicker">{ar?"تواصل معنا":"CONTACT"}</span><h2>{ar?"شاركنا الفكرة، وسنرتب الطريق":"Share the idea. We’ll shape the path."}</h2><p>{ar?"أرسل تفاصيل مشروعك، أو تواصل مباشرة عبر واتساب.":"Send your project details or reach us directly on WhatsApp."}</p><div className="contact-list"><a href={`https://wa.me/${WHATSAPP_NUMBER}`}><MessageCircle/>{WHATSAPP_DISPLAY}</a><a href={`mailto:${CONTACT_EMAIL}`}><Send/>{CONTACT_EMAIL}</a><span><Globe2/>UAE</span></div></div><ProposalForm lang={lang}/></section>}
+        {page === "contact" && <section className="section contact-grid"><div className="contact-copy"><span className="kicker">{ar?"تواصل معنا":"CONTACT"}</span><h2>{ar?"شاركنا الفكرة، وسنرتب الطريق":"Share the idea. We’ll shape the path."}</h2><p>{ar?"أرسل تفاصيل مشروعك، أو تواصل مباشرة عبر واتساب.":"Send your project details or reach us directly on WhatsApp."}</p><div className="contact-list"><a href={`https://wa.me/${CONTACT.whatsappNumber}`} target="_blank" rel="noreferrer"><MessageCircle/>{CONTACT.whatsappDisplay}</a><a href={`mailto:${CONTACT.email}`}><Send/>{CONTACT.email}</a><span><Globe2/>UAE</span></div></div><ProposalForm lang={lang}/></section>}
+
+        {(page === "privacy" || page === "terms") && <section className="section legal-section"><div className="legal-meta"><span className="kicker">HIM BAZ</span><p>{ar ? "آخر تحديث: 2 سبتمبر 2026" : "Last updated: 2 September 2026"}</p></div><div className="legal-list">{legalContent[page][lang].map(([heading, body]) => <article key={heading}><h2>{heading}</h2><p>{body}</p></article>)}</div><p className="legal-note">{ar ? "هذه الشروط معلومات عامة، وتُستكمل باتفاق المشروع الخاص بكل عميل." : "These terms provide general information and are supplemented by each client’s project agreement."}</p></section>}
 
         {home && <section className="cta"><div><span>{ar?"جاهز للخطوة التالية؟":"READY FOR THE NEXT STEP?"}</span><h2>{ar?"لنصنع شيئًا ينمّي أعمالك":"Let’s build something that grows your business"}</h2></div><Link className="light-btn" href="/contact">{ar?"ابدأ مشروعك":"Start your project"}<ArrowUpLeft/></Link></section>}
       </main>
 
-      <footer><div className="footer-brand"><span className="brand-mark">HB</span><div><b>HIM BAZ</b><p>Build. Grow. Lead.</p></div></div><div className="footer-contact"><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a><a href={`https://wa.me/${WHATSAPP_NUMBER}`}>{WHATSAPP_DISPLAY}</a><span>United Arab Emirates</span></div><p className="copyright">© 2026 HIM BAZ</p></footer>
+      <footer><div className="footer-brand"><span className="brand-mark">HB</span><div><b>HIM BAZ</b><p>Build. Grow. Lead.</p></div></div><div className="footer-contact"><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a><a href={`https://wa.me/${CONTACT.whatsappNumber}`} target="_blank" rel="noreferrer">{CONTACT.whatsappDisplay}</a><Link href="/privacy">{ar ? "الخصوصية" : "Privacy"}</Link><Link href="/terms">{ar ? "الشروط" : "Terms"}</Link><span>United Arab Emirates</span></div><p className="copyright">© 2026 HIM BAZ</p></footer>
     </div>
   );
 }

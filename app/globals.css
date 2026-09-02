@@ -195,6 +195,23 @@ body{margin:0;background:#06101f;color:#f3f8ff}
 .proposal-form input,.proposal-form select,.proposal-form textarea{width:100%;background:#071525;border:1px solid rgba(151,194,230,.19);border-radius:7px;color:white;padding:13px 14px;font:inherit;outline:none}
 .proposal-form input:focus,.proposal-form select:focus,.proposal-form textarea:focus{border-color:#2bd8ff}
 .form-btn{width:100%;font-size:15px}
+.website-field{position:absolute;inset-inline-start:-10000px;width:1px;height:1px;overflow:hidden}
+.form-status{min-height:24px;margin:0;color:#a8bed1;font-size:13px;line-height:1.7}
+.form-status.sent{color:#9fe4c0}
+.form-status.error{color:#ffd0b3}
+.form-status a{color:#2bd8ff;font-weight:700}
+.consent-field{grid-template-columns:auto 1fr!important;align-items:start;gap:10px!important;color:#9fb3c8;line-height:1.6}
+.consent-field input{width:18px;height:18px;margin-top:2px;accent-color:#2bd8ff}
+.consent-field span{font-size:12px!important}
+.consent-field a{color:#2bd8ff}
+.legal-section{max-width:920px}
+.legal-meta{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:24px;border-bottom:1px solid rgba(151,194,230,.17)}
+.legal-meta p{color:#7992aa;font-size:13px}
+.legal-list{display:grid;gap:0}
+.legal-list article{padding:34px 0;border-bottom:1px solid rgba(151,194,230,.14)}
+.legal-list h2{font-size:24px;margin:0 0 12px}
+.legal-list p,.legal-note{color:#9fb3c8;font-size:16px;line-height:1.9;margin:0}
+.legal-note{margin-top:32px;padding:22px;border-inline-start:3px solid #2bd8ff;background:rgba(43,216,255,.06)}
 .cta{max-width:1192px;margin:0 auto 100px;padding:58px;background:#2bd8ff;color:#03101d;display:flex;justify-content:space-between;align-items:center;gap:30px}
 .cta span{font-size:12px;font-weight:800;letter-spacing:1px}
 .cta h2{font-size:clamp(30px,4vw,48px);max-width:700px;margin:12px 0 0}
@@ -240,4 +257,5 @@ footer{max-width:1240px;margin:auto;padding:60px 24px 35px;border-top:1px solid 
 footer{grid-template-columns:1fr}
 .footer-contact{justify-content:flex-start;flex-direction:column;align-items:flex-start}
 .copyright{grid-column:auto}
+.legal-meta{align-items:flex-start;flex-direction:column;gap:8px}
 }
